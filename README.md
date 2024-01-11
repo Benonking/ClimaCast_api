@@ -18,7 +18,7 @@ Through use of the most Acurrate Data
 
 ## File Descriptions
 
-	**Client**
+### Client
 	ClimaCast_client/
 		src/
 			components/
@@ -32,7 +32,7 @@ Through use of the most Acurrate Data
 
 How to run - ```npm run dev ```
 
-	**Server**
+### Server
 	ClimaCast_client/
 		index.js - Cotains Helper function and API end points
 		**End points**
