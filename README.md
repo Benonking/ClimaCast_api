@@ -20,24 +20,26 @@ Through use of the most Acurrate Data
 
 	**Client**
 	ClimaCast_client/
-					src/
-						components/
-							App.jsx - Main entry for the client
-							Navbar.jsx 		-- cotains contents of navigation bar
-							About.jsx 		-- cotaoins cotents of the Developer Team
-							Companies.jsx 	-- partner Copanies(Dummies for elastration purposes)
-											Cotains form to send request to the server
-							Landing.jsx 	-- Cotents of the Landing Page
-							Servercies 		-- Contents of different servcies offered
+		src/
+			components/
+				App.jsx - Main entry for the client
+				Navbar.jsx 		-- cotains contents of navigation bar
+				About.jsx 		-- cotaoins cotents of the Developer Team
+				Companies.jsx 	-- partner Copanies(Dummies for elastration purposes)
+						Cotains form to send request to the server
+				Landing.jsx 	-- Cotents of the Landing Page
+				Servercies 		-- Contents of different servcies offered
+
 How to run - ```npm run dev ```
 
-		**Server**
+	**Server**
 	ClimaCast_client/
-					index.js - Cotains Helper function and API end points
-					**End points**
-						-weather/:location - Retrieves current Weather data for specified location
-						-forecast/:location - Retrieves weather forecast for the next 5 days
-						-history/:location/date - Retireves historical of location 
+		index.js - Cotains Helper function and API end points
+		**End points**
+				-weather/:location - Retrieves current Weather data for specified location
+				-forecast/:location - Retrieves weather forecast for the next 5 days
+				-history/:location/date - Retireves historical of location 
+
 How to run - ```npm run dev ```
 
 ## Bugs
