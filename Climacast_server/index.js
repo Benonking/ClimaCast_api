@@ -75,7 +75,7 @@ class WeatherAPI {
     }
   }
 
-  async getWeather(location) {
+  async getCurrentWeather(location) {
     try {
       const [lon, lat] = await this.fetchCoordinates(location);
       const data = await this.fetchData(lat, lon);
@@ -85,17 +85,34 @@ class WeatherAPI {
       throw e; 
     }
   }
+  async getForecast(location){
+    try{
+      const [lat, lon] = await this.fetchCoordinates(location);
+      const data = await this.fetchData(lat, lon);
+      return data.dailyForecast
+    }catch(e) {
+    console.error('Error: ' + e.message);
+    throw e;
+  }
+}
 
   async fetchData(lat, lon) {
     try {
       const response = await axios.get(
         `${this.baseUrl}?lat=${lat}&lon=${lon}&units=metric&appid=${this.APIKey}`
       );
-      
+      let forecast = {}
+      for(let i= 0; i < response.data.daily.length ; i++) {
+        let date = response.data.daily[i].dt
+        date =  new Date(date * 1000).toDateString();
+        let weather = response.data.daily[i].weather[0].description
+        forecast[date] = weather
+      }
       const data = {
         conditions: response.data.current.weather[0].description,
         temp_celicius: response.data.current.temp,
-        humidity: response.data.current.humidity
+        humidity: response.data.current.humidity,
+        dailyForecast: forecast
       };
       //console.log(data)
       return data;
@@ -107,32 +124,40 @@ class WeatherAPI {
 }
 // create class instance
 const weatherAPI = new WeatherAPI();
-
 app.get('/weather/:location', async (req, res) => {
   const { location } = req.params;
-  console.log(location)
+  console.log(`Current weather for ${location}`)
   try {
-    // extract latitude and longitude from the location
-    const [lat, lon] = await weatherAPI.fetchCoordinates(location);
-    console.log(lat, lon)
-    // Fetch weather data using the extracted lat and lon
-    const data = await weatherAPI.fetchData(lat, lon);
-    console.log('Weather data ',data)
+    const data = await weatherAPI.getCurrentWeather(location);
+    console.log(`Current weather for ${location}`,data)
     res.setHeader('Content-Type','application/json');
-    res.send(JSON.stringify({weatherData:data}));
+    res.send(JSON.stringify({CurrentWeather:data}));
   } catch (error) {
     console.log(error)
     res.status(500).send('Error: ' + error.message);
   }
 });
 
+app.get('/daily/:location', async(req, res) => {
+  const {location} = req.params
+  try{
+    const forecastdata   = await weatherAPI.getForecast(location);
+    console.log(`Forecaste for ${location}`, forecastdata)
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ForecasteData: forecastdata}));
+  }catch (error) {
+    console.log(error);
+    res.status(500).send('Error: ' + error.message);
+  }
+})
 app.get('/history/:lat/:lon/:date', async (req, res) => {
   const { lat, lon, date } = req.params;
   try {
     const data = await weatherAPI.fetchData(lat, lon, new Date(date));
     res.send(data);
   } catch (error) {
-    res.status(500).send('Error: ' + error.message);
+    console.log(error);
+
   }
 });
 

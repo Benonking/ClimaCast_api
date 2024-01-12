@@ -43,7 +43,7 @@ How to run - ```npm run dev ```
 How to run - ```npm run dev ```
 
 ## Bugs
-If the Data source (openmap.org) api is not accesible The application will not run or retrieve data as expected
+If the Data source (openweathermap.org) api is not accesible The application will not run or retrieve data as expected
 
 ## Authors
 Masereka Benon 
