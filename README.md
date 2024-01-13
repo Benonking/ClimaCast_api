@@ -18,7 +18,7 @@ Through use of the most Acurrate Data
 
 ## File Descriptions
 
-	**Client**
+### Client
 	ClimaCast_client/
 		src/
 			components/
@@ -32,7 +32,7 @@ Through use of the most Acurrate Data
 
 How to run - ```npm run dev ```
 
-	**Server**
+### Server
 	ClimaCast_client/
 		index.js - Cotains Helper function and API end points
 		**End points**
@@ -43,7 +43,7 @@ How to run - ```npm run dev ```
 How to run - ```npm run dev ```
 
 ## Bugs
-If the Data source (openmap.org) api is not accesible The application will not run or retrieve data as expected
+If the Data source (openweathermap.org) api is not accesible The application will not run or retrieve data as expected
 
 ## Authors
 Masereka Benon 
