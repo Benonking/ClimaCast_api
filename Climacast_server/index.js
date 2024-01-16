@@ -76,8 +76,13 @@ class WeatherAPI {
   async getCurrentWeather(location) {
     try {
       const [lon, lat] = await this.fetchCoordinates(location);
-      const data = await this.fetchData(lat, lon);
-      return data.conditions
+      const res = await this.fetchData(lat, lon);
+      const data = {
+        conditions: res.conditions,
+        humidity: res.humidity,
+        temp: res.temp_celicius
+      }
+      return data
     } catch (e) {
       console.error('Error: ' + e.message);
       throw e; 
@@ -189,3 +194,5 @@ app.get('/history/:location/:date', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+
+module.exports = { WeatherAPI, app };
