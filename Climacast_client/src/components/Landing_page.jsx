@@ -1,30 +1,71 @@
 import { BiSearchAlt2 } from "react-icons/bi";
 import { useEffect, useState } from "react";
 import React from 'react';
-import img from '../assets/img.avif';
 import bg from '../assets/bg.jpg';
 import axios from 'axios';
+
+const ForecastTable = ({forecastData}) => {
+  if (forecastData == null || forecastData === undefined) {
+    return null
+  }
+  return (
+    <table className="w-full table-auto">
+    <thead>
+      <tr className="bg-teal-500 text-white">
+        <th className="py-2 px-4 text-left">Day</th>
+        <th className="py-2 px-4 text-left">Weather Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      {Object.entries(forecastData).map(([day, condition], index) => (
+        <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'hover:bg-gray-100'}>
+          <td className="py-2 px-4">{day}</td>
+          <td className="py-2 px-4">{condition}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  )
+}
 
 function Landing() {
   const defaultLocation = 'Kasese';
   const [CityName, setCityName] = useState(defaultLocation);
   const [weatherData, setWeatherData] = useState(null);
+  const [forecast, setForecaste] = useState(defaultLocation)
+  const [searched, setSearched] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
-  const fetchWeatherData = async (city) => {
-    console.log('Fetching weather for:' ,city)
+  const currentWeatherData = async (city) => {
+    //console.log('Fetching weather for:' ,city)
     try {
       const response = await axios.get(`http://localhost:1234/weather/${city}`);
-      setWeatherData(response.data.weatherData);
+      setWeatherData(response.data.CurrentWeather);
+      setDataLoaded(true)
     } catch (err) {
       console.error('Error fetching data', err);
+      setWeatherData(null);
+      setDataLoaded(true)
     }
   };
+  const forecastWeatherData = async (city) => {
+    console.log('Fetching forecast for:', city)
+    try{
+      const res = await axios.get(`http://localhost:1234/daily/${city}`);
+      //console.log(res.data.ForecasteData);
+      setForecaste(res.data.ForecasteData);
+    } catch (err) {
+      console.log('Error fetching forecast data', err);
+      setForecaste(null)
+    }
+  }
 
   useEffect(() => {
-    // Fetch data for efault city when the page loads
-   fetchWeatherData(defaultLocation)
+    // Fetch data for default city when the page loads
+   currentWeatherData(defaultLocation)
+   forecastWeatherData(defaultLocation)
   }, []);
-
+  
   const handleLocationChange = (e) => {
     setCityName(e.target.value);
   };
@@ -32,7 +73,10 @@ function Landing() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (CityName) {
-      fetchWeatherData(CityName);
+      await currentWeatherData(CityName);
+      await forecastWeatherData(CityName);
+      setSearched(true);
+      setDataLoaded(false)
     }
   };
 
@@ -49,6 +93,7 @@ function Landing() {
               type="text"
               value={CityName}
               onChange={handleLocationChange}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
               placeholder="Enter location..!!"
             />
             <button type='button'>
@@ -61,18 +106,37 @@ function Landing() {
           </form>
           {weatherData ? (
           <div className="border border-solid border-gray-300 p-4 rounded-lg max-w-[500px]">
-            <p className="bg-gradient-to-r from-slate-500 via-slate-50 to-transparent p-4 text-lg">Current Weather for <span className="font-bold">{CityName}</span></p>
-            <p>Weather Conditions <span className="text-teal-600 font-semibold">{weatherData.conditions}</span></p>
-            <p>Temperature(cel) <span className="text-teal-600 font-semibold">{weatherData.temp_celicius}</span></p>
-            <p>Humidity <span className="text-teal-600 font-semibold">{weatherData.humidity}</span></p>
-            {/* Add more weather data fields as needed */}
-            </div>) : (
-            <p>No data available. Please check your location or try again later.</p>
-            )}
+           <p className={`bg-[#0e7490] to-transparent p-4 text-lg text-white shadow-lg rounded-t-lg ${searched ? 'visible' : 'hidden'}`}>
+                Current Weather for <span className="font-bold">{CityName}</span>
+              </p>
+            <table className="table-auto w-full">
+              <tbody>
+                <tr className="bg-gray-200">
+                  <td className="py-2 px-4 font-semibold">Weather Conditions</td>
+                  <td className="py-2 px-4 text-teal-600 font-semibold">{weatherData.conditions}</td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-4 font-semibold">Temperature (Cel)</td>
+                  <td className="py-2 px-4 text-teal-600 font-semibold">{weatherData.temp}</td>
+                </tr>
+                  <tr className="bg-gray-200">
+                    <td className="py-2 px-4 font-semibold">Humidity</td>
+                    <td className="py-2 px-4 text-teal-600 font-semibold">{weatherData.humidity}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          ) : (
+          <p className="text-red-400">No data available. Please check your location or try again later.</p>
+          )}
         </div>
-        <img src={img} className='md:order-last order-first h-62' />
+        <div className="bg-white rounded-lg shadow-lg p-6 w-1/2">
+
+          <h2 className="text-2xl font-semibold mb-4">8-Day Forecast for {CityName}</h2>
+          <ForecastTable forecastData={forecast} />
+        </div>
       </div>
-    </div>
+  </div>
   );
 }
 

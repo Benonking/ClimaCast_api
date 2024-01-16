@@ -6,6 +6,7 @@ Through use of the most Acurrate Data
 #### Front-End
 	- React + Vite
 	- TailWind CSS
+	- Mocha, sinon, chai  for testing
 
 #### Backend
 	- NodeJs with Express
@@ -37,10 +38,16 @@ How to run - ```npm run dev ```
 		index.js - Cotains Helper function and API end points
 		**End points**
 				-weather/:location - Retrieves current Weather data for specified location
-				-forecast/:location - Retrieves weather forecast for the next 5 days
+				-daily/:location - Retrieves weather forecast for the next 5 days
 				-history/:location/date - Retireves historical of location 
 
 How to run - ```npm run dev ```
+
+### Testing
+	Test/
+	index.test.js - Contains tests for weatherApI class functions
+
+How to run  -- ```npm run test```
 
 ## Bugs
 If the Data source (openweathermap.org) api is not accesible The application will not run or retrieve data as expected
